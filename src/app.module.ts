@@ -7,6 +7,7 @@ import { JwtGuard } from '@common/guard/jwt.guard';
 import { RolesGuard } from '@common/guard/roles.guard';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AuthModule } from '@auth/auth.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { AppService } from './app.service';
       isGlobal: true,
       cache: true,
     }),
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [
