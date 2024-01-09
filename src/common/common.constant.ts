@@ -1,0 +1,3 @@
+export const ROLES_KEY = 'roles';
+export const TYPEORM_EX_CUSTOM_REPOSITORY = 'TYPEORM_EX_CUSTOM_REPOSITORY';
+export const SKIP_AUTH_KEY = 'SKIP_AUTH_KEY';
