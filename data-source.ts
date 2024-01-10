@@ -5,16 +5,21 @@ import './src/env';
 
 export const DATABASE_CONFIG: MysqlConnectionOptions = {
   type: 'mysql',
-  host: process.env.DATABASE_HOST,
-  port: +process.env.DATABASE_PORT || 3306,
-  username: process.env.DATABASE_USER,
-  password: process.env.DATABASE_PASSWORD,
+  url: process.env.DATABASE_URL,
+  // host: process.env.DATABASE_HOST,
+  // port: +process.env.DATABASE_PORT || 3306,
+  // username: process.env.DATABASE_USER,
+  // password: process.env.DATABASE_PASSWORD,
   database: process.env.DATABASE_DATABASE,
+  ssl: true,
   synchronize: false,
   logging: true,
   namingStrategy: new SnakeNamingStrategy(),
   entities: [__dirname + '/**/*.entity.{js,ts}'],
   extra: {
     connectionLimit: +process.env.MAX_CONNECTION_LIMIT || 10,
+    ssl: {
+      rejectUnauthorized: false,
+    }
   },
 };
