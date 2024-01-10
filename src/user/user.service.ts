@@ -17,7 +17,21 @@ export class UserService {
   ) {}
   
   async create(dto: CreateUserDto) {
+    const user = this.userRepository.create();
     
+    user.uuid = uuidv4();
+    user.password = uuidv4();
+    user.role = dto.role;
+    user.clientVersion = dto.clientVersion;
+    user.language = dto.language;
+    
+    await this.userRepository.save(user);
+    
+    return {
+      userId: user.id,
+      uuid: user.uuid,
+      password: user.password,
+    };
   }
   
   async load(dto: LoadUserDto) {

@@ -14,7 +14,7 @@ export class JwtGuard extends AuthGuard('jwt') {
       SKIP_AUTH_KEY,
       [context.getHandler(), context.getClass()],
     );
-    if (!isSkipAuth) {
+    if (isSkipAuth) {
       return true;
     }
     return super.canActivate(context);
