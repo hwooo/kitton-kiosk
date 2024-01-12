@@ -1,4 +1,10 @@
-import { IsString, IsEnum, IsOptional, Contains } from 'class-validator';
+import {
+  IsNumber,
+  IsString,
+  IsEnum,
+  IsOptional,
+  Contains,
+} from 'class-validator';
 import { UserRole } from '../user.constant';
 
 export class CreateUserDto {
@@ -14,7 +20,19 @@ export class CreateUserDto {
 }
 
 export class LoadUserDto {
+  @IsNumber()
+  userId: number;
+  
   @IsString()
   @Contains('.')
   clientVersion: string;
+}
+
+export class LoadUserOutput {
+  id: number;
+  uuid: string;
+  role: UserRole;
+  language: string;
+  clientVersion: string;
+  clientVersionUpdate: boolean;
 }
