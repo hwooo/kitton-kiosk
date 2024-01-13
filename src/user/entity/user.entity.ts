@@ -5,11 +5,11 @@ import {
   CreateDateColumn,
   Entity,
   Index,
-  OneToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { StorePurchaseHistory } from '@store/entity/store-purchase-history.entity';
 
 @Entity()
 export class User {
@@ -40,6 +40,11 @@ export class User {
   
   @Column()
   language: string;
+  
+  @OneToMany(() => StorePurchaseHistory, (target) => target.user, {
+    cascade: ['insert', 'update'],
+  })
+  storePurchaseHistories: StorePurchaseHistory[];
   
   @CreateDateColumn()
   createdTime: Date;

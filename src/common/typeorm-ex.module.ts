@@ -5,7 +5,7 @@ import { TYPEORM_EX_CUSTOM_REPOSITORY } from './common.constant';
 
 export class TypeOrmExModule {
   public static forCustomRepository<T extends new (...args: any[]) => any>(
-    repositories: T[]
+    repositories: T[],
   ): DynamicModule {
     const providers: Provider[] = [];
     
