@@ -7,6 +7,7 @@ import {
   UpdateDateColumn,
   OneToMany,
   Index,
+  DeleteDateColumn,
   Entity,
 } from 'typeorm';
 
@@ -37,6 +38,9 @@ export class Store {
   
   @UpdateDateColumn({ select: false })
   updatedTime: Date;
+  
+  @DeleteDateColumn()
+  deletedTime: Date;
   
   @OneToMany(() => StorePurchaseHistory, (target) => target.store, {
     cascade: ['insert', 'update'],
