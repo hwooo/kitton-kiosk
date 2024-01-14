@@ -4,6 +4,7 @@ import {
   RegisterStoreProductDto,
   UpdateStoreProductDto,
   DeleteStoreProductDto,
+  PurchaseProductDto,
 } from './dto/store.dto';
 import { UserInterface } from '@user/user.interface';
 import { CurrentUser } from '@common/decorator/current-user.decorator';
@@ -49,5 +50,11 @@ export class StoreCustomerController {
     private storeService: StoreService,
   ) {}
   
-  
+  @Post('purchaseProduct')
+  async purchaseProduct(
+    @CurrentUser() currentUser: UserInterface,
+    @Body() dto: PurchaseProductDto,
+  ) {
+    return this.storeService.purchaseProduct(currentUser, dto);
+  }
 }

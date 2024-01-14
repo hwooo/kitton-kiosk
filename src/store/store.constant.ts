@@ -10,5 +10,4 @@ export enum StoreMessageCode {
   NotExistProduct = 1000,
   AlreadyRemoved = 1100,
   OutOfStock = 1200,
-  TooManyAmount = 1300,
 }

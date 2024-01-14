@@ -2,6 +2,7 @@ import { ProductType } from '../store.constant';
 import {
   IsNumber,
   IsString,
+  IsArray,
   Min,
   IsEnum,
   IsOptional,
@@ -49,6 +50,22 @@ export class DeleteStoreProductDto {
   storeUuid: string;
 }
 
+class PurchaseProductBundle {
+  @IsNumber()
+  storeUuid: string;
+  
+  @IsNumber()
+  purchaseAmount: number;
+}
+
+export class PurchaseProductDto {
+  @IsNumber()
+  userId: number;
+  
+  @IsArray()
+  purchaseBundle: PurchaseProductBundle[];
+}
+
 export class RegisterStoreProductOutput {
   isSuccess: boolean;
   messageCode: number;
@@ -64,4 +81,10 @@ export class UpdateStoreProductOutput {
 export class DeleteStoreProductOutput {
   isSuccess: boolean;
   messageCode: number;
+}
+
+export class PurchaseProductOutput {
+  isSuccess: boolean;
+  messageCode: number;
+  totalPaymentPrice: number;
 }
