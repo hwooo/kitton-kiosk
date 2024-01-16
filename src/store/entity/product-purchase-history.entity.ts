@@ -1,6 +1,5 @@
-import { ProductType } from '../store.constant';
 import { User } from '@user/entity/user.entity';
-import { Store } from './store.entity';
+import { Product } from './product.entity';
 import {
   Column,
   CreateDateColumn,
@@ -13,29 +12,23 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class StorePurchaseHistory {
+export class ProductPurchaseHistory {
   @PrimaryGeneratedColumn()
   id: number;
   
   @Index()
-  @Column({ name: 'store_id' })
-  storeId: number;
+  @Column({ name: 'product_id' })
+  productId: number;
   
-  @ManyToOne(() => Store, (target) => target.storePurchaseHistories, {
+  @ManyToOne(() => Product, (target) => target.productPurchaseHistories, {
     createForeignKeyConstraints: false,
     onDelete: 'CASCADE',
     nullable: false,
   })
   @JoinColumn({
-    name: 'store_id',
+    name: 'product_id',
   })
-  store: Store;
-  
-  @Column({ type: 'enum', enum: ProductType })
-  productType: ProductType;
-  
-  @Column()
-  productIndex: number;
+  product: Product;
   
   @Index()
   @Column()
@@ -45,7 +38,7 @@ export class StorePurchaseHistory {
   @Column({ name: 'customer_user_id' })
   customerUserId: number;
   
-  @ManyToOne(() => User, (target) => target.storePurchaseHistories, {
+  @ManyToOne(() => User, (target) => target.productPurchaseHistories, {
     createForeignKeyConstraints: false,
     onDelete: 'CASCADE',
     nullable: false,

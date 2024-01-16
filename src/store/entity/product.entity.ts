@@ -1,5 +1,5 @@
-import { ProductType } from '../store.constant';
-import { StorePurchaseHistory } from './store-purchase-history.entity';
+import { ProductType } from '../product.constant';
+import { ProductPurchaseHistory } from './product-purchase-history.entity';
 import {
   Column,
   CreateDateColumn,
@@ -12,20 +12,23 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class Store {
+export class Product {
   @PrimaryGeneratedColumn()
   id: number;
   
   @Index({ unique: true })
   @Column({ length: 40 })
-  storeUuid: string;
+  productUuid: string;
   
   @Index()
-  @Column({ type: 'enum', enum: ProductType })
+  @Column()
   productType: ProductType;
   
   @Column()
   productIndex: number;
+  
+  @Column()
+  productName: string;
   
   @Column({ default: 0 })
   amount: number;
@@ -42,8 +45,8 @@ export class Store {
   @DeleteDateColumn()
   deletedTime: Date;
   
-  @OneToMany(() => StorePurchaseHistory, (target) => target.store, {
+  @OneToMany(() => ProductPurchaseHistory, (target) => target.product, {
     cascade: ['insert', 'update'],
   })
-  storePurchaseHistories: StorePurchaseHistory[];
+  productPurchaseHistories: ProductPurchaseHistory[];
 }

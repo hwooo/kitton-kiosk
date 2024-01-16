@@ -2,35 +2,35 @@ import { Injectable } from '@nestjs/common';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { In, MoreThan } from 'typeorm';
 import { Transactional, Propagation } from 'typeorm-transactional';
-import { StoreRepository } from './repository/store.repository';
-import { StorePurchaseHistory } from './entity/store-purchase-history.entity';
-import { StorePurchaseHistoryRepository } from './repository/store-purchase-history.repository';
-import { StoreMessageCode } from './store.constant';
+import { ProductRepository } from './repository/product.repository';
+import { ProductPurchaseHistory } from './entity/product-purchase-history.entity';
+import { ProductPurchaseHistoryRepository } from './repository/product-purchase-history.repository';
+import { StoreMessageCode } from './product.constant';
 import { UserInterface } from '@user/user.interface';
 import { v4 as uuidv4 } from 'uuid';
 import {
-  RegisterStoreProductDto,
-  UpdateStoreProductDto,
-  DeleteStoreProductDto,
+  RegisterProductDto,
+  UpdateProductDto,
+  DeleteProductDto,
   PurchaseProductDto,
-  RegisterStoreProductOutput,
-  UpdateStoreProductOutput,
-  DeleteStoreProductOutput,
+  RegisterProductOutput,
+  UpdateProductOutput,
+  DeleteProductOutput,
   PurchaseProductOutput,
-} from './dto/store.dto';
+} from './dto/product.dto';
 
 @Injectable()
-export class StoreService {
+export class ProductService {
   constructor(
-    private readonly storeRepository: StoreRepository,
-    private readonly storePurchaseHistoryRepository: StorePurchaseHistoryRepository,
+    private readonly productRepository: ProductRepository,
+    private readonly productPurchaseHistoryRepository: ProductPurchaseHistoryRepository,
   ) {}
   
   @Transactional({ propagation: Propagation.NESTED })
   async registerProduct(
     currentUser: UserInterface,
-    dto: RegisterStoreProductDto,
-  ): Promise<RegisterStoreProductOutput> {
+    dto: RegisterProductDto,
+  ): Promise<RegisterProductOutput> {
     if (currentUser.userId !== dto.userId) {
       throw new HttpException(
         `user doesn't exist`,
@@ -38,19 +38,19 @@ export class StoreService {
       );
     }
     
-    const product = this.storeRepository.create();
-    product.storeUuid = uuidv4();
+    const product = this.productRepository.create();
+    product.productUuid = uuidv4();
     product.productType = dto.productType;
     product.productIndex = dto.productIndex;
     product.amount = dto.amount;
     product.price = dto.price;
     
-    await this.storeRepository.save(product);
+    await this.productRepository.save(product);
     
     return {
       isSuccess: true,
       messageCode: StoreMessageCode.Complete,
-      storeUuid: product.storeUuid,
+      storeUuid: product.productUuid,
       storeId: product.id,
     };
   }
@@ -58,8 +58,8 @@ export class StoreService {
   @Transactional({ propagation: Propagation.NESTED })
   async updateProduct(
     currentUser: UserInterface,
-    dto: UpdateStoreProductDto,
-  ): Promise<UpdateStoreProductOutput> {
+    dto: UpdateProductDto,
+  ): Promise<UpdateProductOutput> {
     if (currentUser.userId !== dto.userId) {
       throw new HttpException(
         `user doesn't exist`,
@@ -67,9 +67,9 @@ export class StoreService {
       );
     }
     
-    const targetProduct = await this.storeRepository.findOne({
+    const targetProduct = await this.productRepository.findOne({
       where: {
-        storeUuid: dto.storeUuid,
+        productUuid: dto.storeUuid,
       },
     });
     
@@ -83,7 +83,7 @@ export class StoreService {
     targetProduct.amount = dto.amount !== -1 ? dto.amount : targetProduct.amount;
     targetProduct.price = dto.price !== -1 ? dto.price : targetProduct.price;
     
-    await this.storeRepository.save(
+    await this.productRepository.save(
       targetProduct,
       { reload: false },
     );
@@ -97,8 +97,8 @@ export class StoreService {
   @Transactional({ propagation: Propagation.NESTED })
   async deleteProduct(
     currentUser: UserInterface,
-    dto: DeleteStoreProductDto,
-  ): Promise<DeleteStoreProductOutput> {
+    dto: DeleteProductDto,
+  ): Promise<DeleteProductOutput> {
     if (currentUser.userId !== dto.userId) {
       throw new HttpException(
         `user doesn't exist`,
@@ -106,9 +106,9 @@ export class StoreService {
       );
     }
     
-    const targetProduct = await this.storeRepository.findOne({
+    const targetProduct = await this.productRepository.findOne({
       where: {
-        storeUuid: dto.storeUuid,
+        productUuid: dto.storeUuid,
       },
       select: [
         'id',
@@ -122,7 +122,7 @@ export class StoreService {
       };
     }
     
-    const deleteResult = await this.storeRepository.softDelete({
+    const deleteResult = await this.productRepository.softDelete({
       id: targetProduct.id,
     });
     
@@ -151,9 +151,9 @@ export class StoreService {
       );
     }
     
-    const targetProducts = await this.storeRepository.find({
+    const targetProducts = await this.productRepository.find({
       where: {
-        storeUuid: In(dto.purchaseBundle.map((el) => el.storeUuid)),
+        productUuid: In(dto.purchaseBundle.map((el) => el.storeUuid)),
         amount: MoreThan(0),
       },
       lock: {
@@ -170,16 +170,16 @@ export class StoreService {
     }
     
     const purchases: { storeId: number; paymentPrice: number; }[] = [];
-    const purchaseHistories: StorePurchaseHistory[] = [];
+    const purchaseHistories: ProductPurchaseHistory[] = [];
     
     for (const product of targetProducts) {
       const currentBundle = dto.purchaseBundle.find(
-        (el) => el.storeUuid == product.storeUuid,
+        (el) => el.storeUuid == product.productUuid,
       );
       
       if (!currentBundle) {
         throw new HttpException(
-          `invalid storeUuid (${product.storeUuid})`,
+          `invalid storeUuid (${product.productUuid})`,
           HttpStatus.FORBIDDEN,
         );
       }
@@ -191,20 +191,18 @@ export class StoreService {
         paymentPrice: paymentPrice,
       });
       
-      const purchaseHistory = new StorePurchaseHistory();
-      purchaseHistory.storeId = product.id;
+      const purchaseHistory = new ProductPurchaseHistory();
+      purchaseHistory.productId = product.id;
       purchaseHistory.customerUserId = currentUser.userId;
-      purchaseHistory.productType = product.productType;
-      purchaseHistory.productIndex = product.productIndex;
       purchaseHistory.paymentPrice = paymentPrice;
       purchaseHistories.push(purchaseHistory);
     }
     
-    await this.storePurchaseHistoryRepository.insertNotReload(
+    await this.productPurchaseHistoryRepository.insertNotReload(
       purchaseHistories,
     );
     
-    await this.storeRepository.save(
+    await this.productRepository.save(
       targetProducts,
       { reload: false },
     );

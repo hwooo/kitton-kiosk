@@ -1,4 +1,4 @@
-import { ProductType } from '../store.constant';
+import { ProductType } from '../product.constant';
 import {
   IsNumber,
   IsString,
@@ -8,7 +8,7 @@ import {
   IsOptional,
 } from 'class-validator';
 
-export class RegisterStoreProductDto {
+export class RegisterProductDto {
   @IsNumber()
   userId: number;
   
@@ -26,7 +26,7 @@ export class RegisterStoreProductDto {
   price: number;
 }
 
-export class UpdateStoreProductDto {
+export class UpdateProductDto {
   @IsNumber()
   userId: number;
   
@@ -42,7 +42,7 @@ export class UpdateStoreProductDto {
   price?: number = -1;
 }
 
-export class DeleteStoreProductDto {
+export class DeleteProductDto {
   @IsNumber()
   userId: number;
   
@@ -50,7 +50,7 @@ export class DeleteStoreProductDto {
   storeUuid: string;
 }
 
-class PurchaseProductBundle {
+export class PurchaseProductBundle {
   @IsNumber()
   storeUuid: string;
   
@@ -66,19 +66,19 @@ export class PurchaseProductDto {
   purchaseBundle: PurchaseProductBundle[];
 }
 
-export class RegisterStoreProductOutput {
+export class RegisterProductOutput {
   isSuccess: boolean;
   messageCode: number;
   storeUuid: string;
   storeId: number;
 }
 
-export class UpdateStoreProductOutput {
+export class UpdateProductOutput {
   isSuccess: boolean;
   messageCode: number;
 }
 
-export class DeleteStoreProductOutput {
+export class DeleteProductOutput {
   isSuccess: boolean;
   messageCode: number;
 }

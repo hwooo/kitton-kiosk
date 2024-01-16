@@ -13,7 +13,7 @@
     "paths": {
       "@auth/*": ["auth/*"],
       "@common/*": ["common/*"],
-      "@store/*": ["store/*"],
+      "@product/*": ["store/*"],
       "@settle/*": ["settle/*"],
       "@user/*": ["user/*"],
     },

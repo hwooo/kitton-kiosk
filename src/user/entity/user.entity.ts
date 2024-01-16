@@ -9,7 +9,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { StorePurchaseHistory } from '@store/entity/store-purchase-history.entity';
+import { ProductPurchaseHistory } from '@store/entity/product-purchase-history.entity';
 
 @Entity()
 export class User {
@@ -41,10 +41,10 @@ export class User {
   @Column()
   language: string;
   
-  @OneToMany(() => StorePurchaseHistory, (target) => target.user, {
+  @OneToMany(() => ProductPurchaseHistory, (target) => target.user, {
     cascade: ['insert', 'update'],
   })
-  storePurchaseHistories: StorePurchaseHistory[];
+  productPurchaseHistories: ProductPurchaseHistory[];
   
   @CreateDateColumn()
   createdTime: Date;
