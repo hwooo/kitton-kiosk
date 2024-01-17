@@ -42,6 +42,7 @@ export class ProductService {
     product.productUuid = uuidv4();
     product.productType = dto.productType;
     product.productIndex = dto.productIndex;
+    product.productName = dto.productName;
     product.amount = dto.amount;
     product.price = dto.price;
     
@@ -50,8 +51,8 @@ export class ProductService {
     return {
       isSuccess: true,
       messageCode: StoreMessageCode.Complete,
-      storeUuid: product.productUuid,
-      storeId: product.id,
+      productUuid: product.productUuid,
+      productId: product.id,
     };
   }
   
@@ -69,7 +70,7 @@ export class ProductService {
     
     const targetProduct = await this.productRepository.findOne({
       where: {
-        productUuid: dto.storeUuid,
+        productUuid: dto.productUuid,
       },
     });
     
@@ -108,7 +109,7 @@ export class ProductService {
     
     const targetProduct = await this.productRepository.findOne({
       where: {
-        productUuid: dto.storeUuid,
+        productUuid: dto.productUuid,
       },
       select: [
         'id',
@@ -153,11 +154,11 @@ export class ProductService {
     
     const targetProducts = await this.productRepository.find({
       where: {
-        productUuid: In(dto.purchaseBundle.map((el) => el.storeUuid)),
+        productUuid: In(dto.purchaseBundle.map((el) => el.productUuid)),
         amount: MoreThan(0),
       },
       lock: {
-        mode: 'pessimistic_partial_write',
+        mode: 'pessimistic_write',
       },
     });
     
@@ -174,7 +175,7 @@ export class ProductService {
     
     for (const product of targetProducts) {
       const currentBundle = dto.purchaseBundle.find(
-        (el) => el.storeUuid == product.productUuid,
+        (el) => el.productUuid == product.productUuid,
       );
       
       if (!currentBundle) {

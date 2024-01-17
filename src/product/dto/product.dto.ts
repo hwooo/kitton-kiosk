@@ -18,6 +18,9 @@ export class RegisterProductDto {
   @IsNumber()
   productIndex: number;
   
+  @IsString()
+  productName: string;
+  
   @IsNumber()
   amount: number;
   
@@ -31,7 +34,7 @@ export class UpdateProductDto {
   userId: number;
   
   @IsString()
-  storeUuid: string;
+  productUuid: string;
   
   @IsOptional()
   @IsNumber()
@@ -47,14 +50,11 @@ export class DeleteProductDto {
   userId: number;
   
   @IsString()
-  storeUuid: string;
+  productUuid: string;
 }
 
 export class PurchaseProductBundle {
-  @IsNumber()
-  storeUuid: string;
-  
-  @IsNumber()
+  productUuid: string;
   purchaseAmount: number;
 }
 
@@ -69,8 +69,8 @@ export class PurchaseProductDto {
 export class RegisterProductOutput {
   isSuccess: boolean;
   messageCode: number;
-  storeUuid: string;
-  storeId: number;
+  productUuid: string;
+  productId: number;
 }
 
 export class UpdateProductOutput {
