@@ -9,7 +9,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { ProductPurchaseHistory } from '@store/entity/product-purchase-history.entity';
+import { ProductPurchaseHistory } from '@product/entity/product-purchase-history.entity';
 
 @Entity()
 export class User {

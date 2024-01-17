@@ -1,0 +1,27 @@
+version: 0.2
+
+phases:
+  install:
+    on-failure: ABORT
+    commands:
+      - echo Installing source NPM dependencies...
+      - npm install
+  build:
+    on-failure: ABORT
+    commands:
+      - echo Build started
+      - npm run build
+  post_build:
+    on-failure: ABORT
+    commands:
+      - cp -R node_modules/ dist/node_modules
+      - cp -R package.json dist/package.json
+      - cp Procfile dist/Procfile
+cache:
+  paths:
+    - 'node_modules/**/*'
+artifacts:
+  files:
+    - '**/*'
+  discard-paths: no
+  base-directory: 'dist'
