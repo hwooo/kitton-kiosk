@@ -10,14 +10,13 @@
   - Elastic Beanstalk
   - EC2
   - RDS MySQL 8.0
-  - ElastiCache
   - CodePipeline
   - Route 53
 
 ### 챌린지
 - [X] 계정 인증 시스템
+  - [X] Bearer Token
   - [X] JWT sign
-  - [X] Redis token caching
 - [X] TypeORM v0.3 적용
   - [X] @CustomRepository
   - [X] typeorm-transactional
