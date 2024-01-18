@@ -16,6 +16,7 @@
       "@product/*": ["product/*"],
       "@settle/*": ["settle/*"],
       "@user/*": ["user/*"],
+      "@redis/*": ["redis/*"],
     },
     "incremental": true,
     "skipLibCheck": true,

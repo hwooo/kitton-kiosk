@@ -4,22 +4,27 @@ phases:
   install:
     on-failure: ABORT
     commands:
-      - echo Installing source NPM dependencies...
-      - npm install
+      - yarn config set -H enableImmutableInstalls false
+      - yarn install
   build:
     on-failure: ABORT
     commands:
-      - echo Build started
-      - npm run build
+      - yarn build
   post_build:
     on-failure: ABORT
     commands:
-      - cp -R node_modules/ dist/node_modules
+      - cp -R .ebextensions/ dist/.ebextensions
       - cp -R package.json dist/package.json
-      - cp Procfile dist/Procfile
+      - cp -R buildspec.yml dist/buildspec.yml
+      - cp -R Procfile dist/Procfile
+      - cp -R .pnp.cjs dist/.pnp.cjs
+      - cp -R .pnp.loader.mjs dist/.pnp.loader.mjs
+      - cp -R yarn.lock dist/yarn.lock
+      - cp -R .yarnrc.yml dist/.yarnrc.yml
+      - cp -R .yarn dist/.yarn
 cache:
   paths:
-    - 'node_modules/**/*'
+    - '.yarn/**/*'
 artifacts:
   files:
     - '**/*'

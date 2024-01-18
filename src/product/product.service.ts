@@ -152,9 +152,14 @@ export class ProductService {
       );
     }
     
+    const bundle = dto.purchaseBundle.map((el) => ({
+      productUuid: el.productUuid,
+      purchaseAmount: el.purchaseAmount,
+    }));
+    
     const targetProducts = await this.productRepository.find({
       where: {
-        productUuid: In(dto.purchaseBundle.map((el) => el.productUuid)),
+        productUuid: In(bundle.map((el) => el.productUuid)),
         amount: MoreThan(0),
       },
       lock: {
@@ -170,17 +175,17 @@ export class ProductService {
       };
     }
     
-    const purchases: { storeId: number; paymentPrice: number; }[] = [];
+    const purchases: { productId: number; paymentPrice: number; }[] = [];
     const purchaseHistories: ProductPurchaseHistory[] = [];
     
     for (const product of targetProducts) {
-      const currentBundle = dto.purchaseBundle.find(
+      const currentBundle = bundle.find(
         (el) => el.productUuid == product.productUuid,
       );
       
       if (!currentBundle) {
         throw new HttpException(
-          `invalid storeUuid (${product.productUuid})`,
+          `invalid productUuid (${product.productUuid})`,
           HttpStatus.FORBIDDEN,
         );
       }
@@ -188,7 +193,7 @@ export class ProductService {
       product.amount -= currentBundle.purchaseAmount;
       const paymentPrice = product.price * currentBundle.purchaseAmount;
       purchases.push({
-        storeId: product.id,
+        productId: product.id,
         paymentPrice: paymentPrice,
       });
       

@@ -1,9 +1,11 @@
 import './env';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { RedisModule } from '@liaoliaots/nestjs-redis';
 import { DataSource } from 'typeorm';
 import { Module } from '@nestjs/common';
 import { addTransactionalDataSource } from 'typeorm-transactional';
-import { ConfigModule } from '@nestjs/config';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtGuard } from '@common/guard/jwt.guard';
 import { RolesGuard } from '@common/guard/roles.guard';
@@ -13,7 +15,6 @@ import { AuthModule } from '@auth/auth.module';
 import { UserModule } from '@user/user.module';
 import { ProductModule } from '@product/product.module';
 import { SettleModule } from '@settle/settle.module';
-import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 @Module({
   imports: [
@@ -44,6 +45,19 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
+    }),
+    RedisModule.forRootAsync({
+      useFactory: async (configService: ConfigService) => {
+        return {
+          config: {
+            host: configService.get('REDIS_HOST'),
+            port: configService.get('REDIS_PORT'),
+            password: configService.get('REDIS_PASSWORD')
+          },
+        };
+      },
+      imports: [ConfigModule],
+      inject: [ConfigService],
     }),
     AuthModule,
     UserModule,

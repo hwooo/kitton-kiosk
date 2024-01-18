@@ -19,12 +19,25 @@ export class SettleService {
       );
     }
     
-    const purchases = await this.productPurchaseHistoryRepository.findByListType(
-      dto.type,
+    const revenues = await this.productPurchaseHistoryRepository.findByListType(
       dto.type,
       dto.offset,
     );
     
+    revenues.forEach((revenue) => {
+      revenue.profit = Math.floor(revenue.paymentPrice * 0.9);
+      revenue.tax = Math.floor(revenue.paymentPrice * 0.1);
+    });
     
+    const total = { profitSum: 0, taxSum: 0, paymentPriceSum: 0 };
+    
+    total.profitSum = revenues.reduce((acc, now) => acc + now.profit, 0);
+    total.taxSum = revenues.reduce((acc, now) => acc + now.tax, 0);
+    total.paymentPriceSum = revenues.reduce((acc, now) => acc + now.paymentPrice, 0);
+    
+    return {
+      revenues: revenues,
+      total: total,
+    };
   }
 }

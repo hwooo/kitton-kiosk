@@ -6,15 +6,15 @@ import { SettlementListType } from '@settle/settle.constant';
 @CustomRepository(ProductPurchaseHistory)
 export class ProductPurchaseHistoryRepository extends Repository<ProductPurchaseHistory> {
   async insertNotReload(entities: DeepPartial<ProductPurchaseHistory[]>) {
-    return await this.createQueryBuilder('storePurchaseHistory')
+    return await this.createQueryBuilder('pph')
       .insert()
       .values(entities)
       .updateEntity(false)
       .execute();
   }
   
-  async findByListType(accountId: number, type: SettlementListType, offset: number) {
-    let whereQuery = `account_id = ${accountId} and `;
+  async findByListType(type: SettlementListType, offset: number) {
+    let whereQuery = ``;
     switch (type) {
       case SettlementListType.Daily:
         whereQuery += `date(pph.created_time) = curdate() - interval ${offset} day`;
@@ -30,12 +30,12 @@ export class ProductPurchaseHistoryRepository extends Repository<ProductPurchase
     }
     return await this.createQueryBuilder('pph')
       .where(`${whereQuery}`)
+      .leftJoin('pph.product', 'product')
       .select([
-        'pph.id as id',
-        'pph.product_uuid as productUuid',
-        'pph.product_index as productIndex',
-        'pph.amount as amount',
-        'pph.price as price',
+        'pph.product_id as productId',
+        'product.product_name as productName',
+        'pph.payment_price as paymentPrice',
+        'pph.customer_user_id as customerUserId',
         'pph.created_time as createdTime',
       ])
       .getRawMany();
